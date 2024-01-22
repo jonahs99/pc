@@ -1,0 +1,6 @@
+#!/bin/env fish
+riverctl spawn $argv
+if test $PAD = "true"
+    exit
+end
+

@@ -1,0 +1,30 @@
+#!/bin/env fish
+
+if test (count $argv) -lt 1
+    echo Usage: (basename (status -f)) "<urls...>"
+    exit 1
+end
+
+for url in $argv
+    switch $url
+        case 'git@*'
+            set path\
+                (string replace ':' '/'\
+                    (string match -rg 'git@(.*:.*)' $url))
+        case 'http*'
+            set path\
+                (string match -rg 'https?://(.*)' $url)
+    end
+
+    if test -z $path
+        set_color red; echo Could not parse URL: "$url"; set_color normal
+        continue
+    end
+
+    set path (string replace '.git' '' $path)
+    set path ~/git/$path
+
+    mkdir -p $path
+    git clone $url $path
+end
+
